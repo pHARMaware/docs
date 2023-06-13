@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -e
+
+ALL_PROJECTS=( \
+  "website" \
+  "api" \
+  "api-client" \
+  "bot-ui" \
+  "types" \
+)
+
+DOCKER_COMPOSE_PROJECTS=( \
+  "api" \
+)
+
+ROOT_PATH="$(dirname "${0}")"
+SCRIPTS_PATH="${ROOT_PATH}/scripts"
+REPOS_PATH="${ROOT_PATH}/repos"
+
+function usage {
+  cat << EUSAGE
+usage: ./pharmawarectl <command>
+  bootstrap   Clones all git repos and installs their dependencies
+  up          Starts all docker containers
+  clean       Removes and reinstalls all artifacts
+EUSAGE
+}
+
+command_arg="${1}"
+if [[ "${1}" =~ /pharmawarectl$/ ]]; then
+  command_arg="${2}"
+fi
+
+case "${command_arg}" in
+  "bootstrap" | "up" | "clean")
+    source "${SCRIPTS_PATH}/${command_arg}.sh"
+    ;;
+  "--help" | "-h")
+    usage
+    ;;
+  *)
+    >&2 echo "Command not found '${command_arg}'"
+    usage
+    exit 1
+esac
